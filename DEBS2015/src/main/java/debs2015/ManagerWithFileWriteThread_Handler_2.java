@@ -50,9 +50,12 @@ public class ManagerWithFileWriteThread_Handler_2 {
     private static String COMMA = ",";
     private static String CARRIAGERETURN_NEWLINE = "\r\n";
     String logDir = null;
+    static int bufferSize = 512;
 
     public static void main(String[] args) {
         fileName  = args[0];
+        bufferSize  = Integer.parseInt(args[1]);
+
         ManagerWithFileWriteThread_Handler_2 manager = new ManagerWithFileWriteThread_Handler_2();
 
         manager.run();
@@ -78,7 +81,7 @@ public class ManagerWithFileWriteThread_Handler_2 {
             public DebsEvent newInstance() {
                 return new DebsEvent();
             }
-        }, 512, Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("data-reader-thread-%d").build()), ProducerType.SINGLE, new SleepingWaitStrategy());
+        }, bufferSize, Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("data-reader-thread-%d").build()), ProducerType.SINGLE, new SleepingWaitStrategy());
 
         //******************Handlers**************************************//
 
@@ -243,7 +246,7 @@ public class ManagerWithFileWriteThread_Handler_2 {
             }
 
             long currentTime = System.currentTimeMillis();
-            System.out.println("****** Input ******" + count);
+            System.out.println("****** Input ******");
             System.out.println("events read : " + events);
             System.out.println("time to read (ms) : " + (currentTime - startTime));
             System.out.println("read throughput (events/s) : " + (events * 1000 / (currentTime - startTime)));
