@@ -39,7 +39,6 @@ import java.util.concurrent.Executors;
 public class ManagerWithFileWriteThread_Handler_2 {
 
     volatile long events = 0;
-    volatile long dataSetSize;
     private long startTime;
     private static PerfStats perfStats1 = new PerfStats();
     private static PerfStats perfStats2 = new PerfStats();
@@ -49,10 +48,10 @@ public class ManagerWithFileWriteThread_Handler_2 {
     private RingBuffer dataReadBuffer;
     final boolean performanceLoggingFlag = true;// Config.getConfigurationInfo("org.wso2.siddhi.debs2015.flags.perflogging").equals("true") ? true : false;
     final boolean printOutputFlag = true;// Config.getConfigurationInfo("org.wso2.siddhi.debs2015.flags.printoutput").equals("true") ? true : false;
-    final String logDir = "/wso2dev";//Config.getConfigurationInfo("org.wso2.siddhi.debs2015.experiment.logdir");
-    String fileName = "/wso2dev/20M-dataset.csv";
+    static String fileName;
 
     public static void main(String[] args) {
+        fileName  = args[0];
         ManagerWithFileWriteThread_Handler_2 manager = new ManagerWithFileWriteThread_Handler_2();
 
         manager.run();
@@ -61,7 +60,6 @@ public class ManagerWithFileWriteThread_Handler_2 {
     }
 
     private void run() {
-        dataSetSize = 20000000;
         dataReadDisruptor = new Disruptor<DebsEvent>(new com.lmax.disruptor.EventFactory<DebsEvent>() {
 
             @Override
@@ -132,9 +130,6 @@ public class ManagerWithFileWriteThread_Handler_2 {
             startTime = System.currentTimeMillis();
             while (line != null) {
 
-                if (dataSetSize == events) {
-                    break;
-                }
                 events++;
 
                 //We make an assumption here that we do not get empty strings due to missing values that may present in the input data set.
