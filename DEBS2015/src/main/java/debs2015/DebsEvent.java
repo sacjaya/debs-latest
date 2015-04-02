@@ -33,13 +33,6 @@ public class DebsEvent {
     List<DebsEvent> listAfterFirstWindow;
     float profit;
 
-
-    /*****************************q1p1:query1********************************************/
-    List<DebsEvent> listAfterSecondWindow;
-
-    /*****************************q1p1:query2********************************************/
-    Object[] topK;
-
     /*****************************q2p2:query1********************************************/
     List<ProfitObj> profitObjList;
 
@@ -202,23 +195,6 @@ public class DebsEvent {
     public void setProfit(float profit) {
         this.profit = profit;
     }
-
-    public List<DebsEvent> getListAfterSecondWindow() {
-        return listAfterSecondWindow;
-    }
-
-    public void setListAfterSecondWindow(List<DebsEvent> listAfterSecondWindow) {
-        this.listAfterSecondWindow = listAfterSecondWindow;
-    }
-
-    public Object[] getTopK() {
-        return topK;
-    }
-
-    public void setTopK(Object[] topK) {
-        this.topK = topK;
-    }
-
 
     public List<ProfitObj> getProfitObjList() {
         return profitObjList;

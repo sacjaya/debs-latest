@@ -246,11 +246,6 @@ public class ManagerWithFileWriteThread_Handler_2 {
             e.printStackTrace();
         }
         System.out.println("Now exiting from data loader");
-        try {
-            Thread.sleep(1000000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     private class ConversionHandler implements EventHandler<DebsEvent> {
@@ -278,9 +273,9 @@ public class ManagerWithFileWriteThread_Handler_2 {
 
 
             for (DebsEvent eve : afterThirtyMinWindow) {
-                maxKQ1Processor.process(eve);
+                Object[] topK = maxKQ1Processor.process(eve);
                 long currentTime = System.currentTimeMillis();
-                if (eve.getTopK() != null) {
+                if (topK != null) {
 //                    for (Object o: eve.getTopK()){
 //                        System.out.print(o + " ,");
 //                    }

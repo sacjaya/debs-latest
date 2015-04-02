@@ -32,8 +32,8 @@ public class MaxKQ1Processor {
     private MaxKStoreQ1 maxKStore = new MaxKStoreQ1();
 
 
-    public void process(DebsEvent debsEvent) {
-        debsEvent.setTopK(processEventForMaxK(debsEvent.isCurrent(), debsEvent.getStartCellNo(), debsEvent.getEndCellNo()));
+    public Object[] process(DebsEvent debsEvent) {
+       return processEventForMaxK(debsEvent.isCurrent(), debsEvent.getStartCellNo(), debsEvent.getEndCellNo());
     }
 
 
