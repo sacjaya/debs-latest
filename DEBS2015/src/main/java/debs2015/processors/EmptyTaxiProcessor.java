@@ -7,8 +7,10 @@ import java.util.*;
 
 public class EmptyTaxiProcessor {
 
-    private Map<Integer, Object[]> medallionMap = new HashMap<Integer, Object[]>();
-    private Map<Integer, CountProfitCustomObj> cellDataMap = new HashMap<Integer, CountProfitCustomObj>();       //key:Cell, values: (profit , count )
+//    private Map<Integer, Object[]> medallionMap = new ConcurrentHashMap<Integer, Object[]>();
+    private Object[] medallionMap = new Object[14145];
+//    private Map<Integer, CountProfitCustomObj> cellDataMap = new ConcurrentHashMap<Integer, CountProfitCustomObj>();       //key:Cell, values: (profit , count )
+    private CountProfitCustomObj[] cellDataMap = new CountProfitCustomObj[600600];
     private LinkedList<Object[]> taxiInfoWindow = new LinkedList<Object[]>();
 
 
@@ -26,32 +28,33 @@ public class EmptyTaxiProcessor {
          int startCell  = debsEvent.getStartCellNo();
          float profit = debsEvent.getProfit();
 
-          CountProfitCustomObj previousData=  cellDataMap.get(endCell);
+          CountProfitCustomObj previousData=  cellDataMap[endCell];
           if(previousData != null){
               previousData.count++;
           }  else {
-              cellDataMap.put(endCell, new CountProfitCustomObj(0,1));
+              cellDataMap[endCell] =  new CountProfitCustomObj(0,1);
           }
          changedCell.add(endCell);
 
 
         //Adding new Profit
-        CountProfitCustomObj previousDataStartValue=  cellDataMap.get(startCell);
+        CountProfitCustomObj previousDataStartValue=  cellDataMap[startCell];
         if(previousDataStartValue != null){
             previousDataStartValue.profit = profit;
             changedCell.add(startCell);
         }  else {
-            cellDataMap.put(startCell,  new CountProfitCustomObj(profit,0));
+            cellDataMap[startCell] =  new CountProfitCustomObj(profit,0);
         }
 
 
 
 
         //remove previous trip of the same taxi
-        Object[] previousDropoff = medallionMap.put(medallion, new Object[]{endCell,medallion,dropoffTime});   // previousDropOff has endCellNo, medallion, dropoff_datetime
+        Object[]  previousDropoff = (Object[]) medallionMap[medallion];
+        medallionMap[medallion] =  new Object[]{endCell,medallion,dropoffTime};   // previousDropOff has endCellNo, medallion, dropoff_datetime
         if(previousDropoff != null){
             int cell = (Integer)previousDropoff[0];
-            cellDataMap.get(cell).count--;
+            cellDataMap[cell].count--;
             changedCell.add(cell);
 
         }
@@ -61,13 +64,13 @@ public class EmptyTaxiProcessor {
             if(trip != null && dropoffTime -(Long)trip[2] >= 1800000){
                 taxiInfoWindow.removeFirst();
                 Integer medallionKey =  (Integer)trip[1];
-                Object[] medallionMapEntry = medallionMap.get(medallionKey);
+                Object[] medallionMapEntry = (Object[]) medallionMap[medallionKey];
 
                 if(medallionMapEntry != null && medallionMapEntry[2] ==trip[2] ){
                     int cell =   (Integer)trip[0];
-                    cellDataMap.get(cell).count--;
+                    cellDataMap[cell].count--;
                     changedCell.add(cell);
-                    medallionMap.remove(medallionKey);
+                    medallionMap[medallionKey] = null;
 
                 }
 
@@ -82,12 +85,12 @@ public class EmptyTaxiProcessor {
         List<ProfitObj> profitObjs = new ArrayList<ProfitObj>();
 
         for(Integer cell: changedCell){
-            int count = cellDataMap.get(cell).count;
+            int count = cellDataMap[cell].count;
             if(count >.0) {
-                float profitOfCell = cellDataMap.get(cell).profit;
+                float profitOfCell = cellDataMap[cell].profit;
                  profitObjs.add(new ProfitObj(cell, profitOfCell/count, profitOfCell,count));
             } else {
-                cellDataMap.remove(cell);
+                cellDataMap[cell] = null;
             }
         }
 
