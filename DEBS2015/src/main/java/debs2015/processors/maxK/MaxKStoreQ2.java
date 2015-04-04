@@ -25,7 +25,7 @@ import debs2015.processors.ProfitObj;
 import java.util.*;
 
 public class MaxKStoreQ2 {
-    private Map<Integer, Float> routeFrequencies = new HashMap<Integer, Float>(); //a reverse index of which the key is the cell ID and the value is the profitability.
+    private Float[] routeFrequencies = new Float[361200]; //a reverse index of which the key is the cell ID and the value is the profitability.
     private Map<Float, ArrayList<ProfitObj>> reverseLookup = new TreeMap<Float, ArrayList<ProfitObj>>(
             new Comparator<Float>() {
                 public int compare(Float o1, Float o2) {
@@ -56,7 +56,7 @@ public class MaxKStoreQ2 {
         int cell = customObj.getCellID();
         Float currentProfit = customObj.getProfit_per_taxi();
 
-        Float previousProfit = routeFrequencies.get(customObj.getCellID());
+        Float previousProfit = routeFrequencies[customObj.getCellID()];
 
         if (previousProfit == null) {
             previousProfit = 0f;
@@ -66,11 +66,11 @@ public class MaxKStoreQ2 {
 
 
         if (currentProfit == 0) {
-            routeFrequencies.remove(cell);
+            routeFrequencies[cell] = null;
         } else {
             //This code basically updates the count per cell. If there is a new value for the count which is non-zero, the old value is replaced with the new value.
 
-            routeFrequencies.put(cell, currentProfit);
+            routeFrequencies[cell] = currentProfit;
 
             ArrayList<ProfitObj> cellsList = reverseLookup.get(currentProfit);
 

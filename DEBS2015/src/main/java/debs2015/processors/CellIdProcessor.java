@@ -36,11 +36,8 @@ public class CellIdProcessor  {
         }
 
 //        System.out.println("*"+cellIdFirstComponent*1000+cellIdSecondComponent);
-        return  (cellIdFirstComponent*1000+cellIdSecondComponent);
+        return  (cellIdFirstComponent*601+cellIdSecondComponent);
     }
 
-    public static void main(String[] args) {
 
-
-    }
 }

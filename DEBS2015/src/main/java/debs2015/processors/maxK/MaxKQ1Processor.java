@@ -43,14 +43,14 @@ public class MaxKQ1Processor {
         Object[] data = new Object[2 * kValue];
 
 
-        int startCellValue = Math.round((float) ((startCell / 1000)) / 2) * 1000 + Math.round((float) ((startCell % 1000)) / 2);
-        int endCellValue = Math.round((float) (endCell / 1000) / 2) * 1000 + Math.round((float) ((endCell % 1000)) / 2);
+        int startCellValue = Math.round((float) ((startCell / 601)) / 2) * 301 + Math.round((float) ((startCell % 601)) / 2);
+        int endCellValue = Math.round((float) (endCell / 601) / 2) * 301 + Math.round((float) ((endCell % 601)) / 2);
 
 
         LinkedList<Long> currentTopK;
 
         //The method getMaxK() accepts the "<start cell ID>:<end cell ID>" and the trip count found for this route.
-        currentTopK = maxKStore.getMaxK(((long) (startCellValue)) * 1000000 + (long) endCellValue, isCurrent, kValue);
+        currentTopK = maxKStore.getMaxK(((long) (startCellValue)) * 100000 + (long) endCellValue, isCurrent, kValue);
 
         if (currentTopK == null) {
             return null;
@@ -64,11 +64,11 @@ public class MaxKQ1Processor {
             for (long cell : currentTopK) {
                 //String[] splitValues = cell.split(":");
                 //System.out.println("cell|"+cell+"|"+cell.substring(0, colonIndex)+"|"+cell.substring(colonIndex+1));
-                long startCellIntValue = cell / 1000000;
-                data[position++] = (startCellIntValue / 1000) + "." + (startCellIntValue % 1000);//profitable_cell_id_
+                long startCellIntValue = cell / 100000;
+                data[position++] = (startCellIntValue / 301) + "." + (startCellIntValue % 301);//profitable_cell_id_
 
-                long endCellIntValue = cell % 1000000;
-                data[position++] = (endCellIntValue / 1000) + "." + (endCellIntValue % 1000);//profitable_cell_id_
+                long endCellIntValue = cell % 100000;
+                data[position++] = (endCellIntValue / 301) + "." + (endCellIntValue % 301);//profitable_cell_id_
             }
 
             //Populating remaining elements for the payload of the stream with null if we could not find the top-k number of routes.
