@@ -4,8 +4,8 @@ package debs2015.processors;
 * Created by sachini on 1/9/15.
 */
 public class BucketingBasedMedianAggregateProcessor {
-    int multiplexer =1;
-    int size = 3016 * multiplexer;
+//    int multiplexer =1;
+    int size = 10002 ;
     int[] mediationArray = new int[size];
     int totalElements = 0;
 
@@ -54,20 +54,20 @@ public class BucketingBasedMedianAggregateProcessor {
                 }
                 loopCount++;
             }
-            lastReturnedMedian =  medianValue/multiplexer;
+            lastReturnedMedian =  medianValue;
         }
 
+        lastReturnedMedian = lastReturnedMedian/100;
         return lastReturnedMedian;
     }
 
-
+            //10001
     public float processAdd(float element) {
-		 if(element<0){
+        if(element<0){
               return lastReturnedMedian;
          } else {
-
-             int roundValue = Math.round(element * multiplexer);
-             if (roundValue < size - 1) {
+            int roundValue = (int) (element*100);
+              if (roundValue < size - 1) {
                  mediationArray[roundValue] += 1;
              } else {
                  mediationArray[size - 1] += 1;
@@ -84,7 +84,7 @@ public class BucketingBasedMedianAggregateProcessor {
         if(element<0){
             return lastReturnedMedian;
         } else {
-            int roundValue = Math.round(element * multiplexer);
+            int roundValue = (int) (element*100);
             if (roundValue < size - 1) {
                 mediationArray[roundValue] -= 1;
             } else {
@@ -95,7 +95,7 @@ public class BucketingBasedMedianAggregateProcessor {
             return getMedian();
         }
     }
-	
+
 //    public void removeElement(float element) {
 //        int roundValue = Math.round(element*multiplexer);
 //        if (roundValue < size - 1) {
