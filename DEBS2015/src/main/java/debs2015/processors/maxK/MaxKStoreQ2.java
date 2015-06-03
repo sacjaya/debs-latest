@@ -128,7 +128,7 @@ public class MaxKStoreQ2 {
             return result;
         } else {
             for (int i = 0; i < result.size(); i++) {
-                if (result.get(i) != lastResult.get(i)) {
+                if (!result.get(i).equals(lastResult.get(i))) {
                     lastResult = result;
                     return result;
                 }
