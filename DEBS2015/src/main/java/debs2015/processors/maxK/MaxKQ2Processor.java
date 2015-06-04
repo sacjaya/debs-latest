@@ -29,7 +29,7 @@ public class MaxKQ2Processor {
     private static final Logger LOGGER = Logger.getLogger(MaxKQ2Processor.class);
     private boolean debugEnabled = false;
 
-    private static final String NULL_VALUE = "null";
+    private static final String NULL_VALUE = "NULL";
     //The K value
     private int kValue = 10;
 
@@ -38,7 +38,7 @@ public class MaxKQ2Processor {
 
 
     public Object[] processEventForMaxK(ProfitObj profitObj, boolean isCurrent) {
-        Object[] data = new Object[4 * kValue];
+        Object[] data = new Object[kValue];
 
         //Map<Double, List<CustomObj>> currentTopK;
         LinkedList<ProfitObj> currentTopK;
@@ -65,18 +65,11 @@ public class MaxKQ2Processor {
                 //for (int i = cellList.size()-1 ; i >= 0 ; i--){
                 //CustomObj customObj = cellList.get(i);
                 int cellIntValue = customObj.getCellID();
-                data[position++] = (cellIntValue / 601) + "." + (cellIntValue % 601);//profitable_cell_id_
-                data[position++] = customObj.getEmptyTaxiCount();//empty_taxies_in_cell_id_
-                data[position++] = customObj.getProfit();//median_profit_in_cell_id_
-                data[position++] = customObj.getProfit_per_taxi();//profitability_of_cell_
-
+                data[position++] = (cellIntValue / 601) + "." + (cellIntValue % 601) + "," + customObj.getEmptyTaxiCount() + "," + customObj.getProfit() + "," + customObj.getProfit_per_taxi();//profitability_of_cell_
             }
 
             //Populating remaining elements for the payload of the stream with null if we could not find the top-k number of routes.
-            while (position < (4 * kValue)) {
-                data[position++] = NULL_VALUE;
-                data[position++] = NULL_VALUE;
-                data[position++] = NULL_VALUE;
+            while (position < kValue) {
                 data[position++] = NULL_VALUE;
             }
 

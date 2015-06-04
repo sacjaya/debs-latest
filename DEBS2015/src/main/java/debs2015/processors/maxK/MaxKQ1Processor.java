@@ -26,7 +26,7 @@ import java.util.LinkedList;
 
 public class MaxKQ1Processor {
 
-    private static final String NULL_VALUE = "null";
+    private static final String NULL_VALUE = "NULL";
     //The K value
     private int kValue = 10;
     private MaxKStoreQ1 maxKStore = new MaxKStoreQ1();
@@ -40,7 +40,7 @@ public class MaxKQ1Processor {
     private Object[] processEventForMaxK(boolean isCurrent, int startCell, int endCell) {
 
 
-        Object[] data = new Object[2 * kValue];
+        Object[] data = new Object[kValue];
 
 
         int startCellValue = Math.round((float) ((startCell / 601)) / 2) * 301 + Math.round((float) ((startCell % 601)) / 2);
@@ -65,20 +65,14 @@ public class MaxKQ1Processor {
                 //String[] splitValues = cell.split(":");
                 //System.out.println("cell|"+cell+"|"+cell.substring(0, colonIndex)+"|"+cell.substring(colonIndex+1));
                 long startCellIntValue = cell / 100000;
-                data[position++] = (startCellIntValue / 301) + "." + (startCellIntValue % 301);//profitable_cell_id_
-
                 long endCellIntValue = cell % 100000;
-                data[position++] = (endCellIntValue / 301) + "." + (endCellIntValue % 301);//profitable_cell_id_
+                data[position++] = (startCellIntValue / 301) + "." + (startCellIntValue % 301) + "," + (endCellIntValue / 301) + "." + (endCellIntValue % 301);//profitable_cell_id_
             }
 
             //Populating remaining elements for the payload of the stream with null if we could not find the top-k number of routes.
-            while (position < (2 * kValue)) {
-                data[position++] = NULL_VALUE;
+            while (position < kValue) {
                 data[position++] = NULL_VALUE;
             }
-
-
-
 
             return data;
         }
