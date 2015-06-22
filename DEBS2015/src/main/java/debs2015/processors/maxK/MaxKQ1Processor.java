@@ -33,9 +33,8 @@ public class MaxKQ1Processor {
 
 
     public Object[] process(DebsEvent debsEvent) {
-       return processEventForMaxK(debsEvent.isCurrent(), debsEvent.getStartCellNo(), debsEvent.getEndCellNo());
+       return processEventForMaxK(debsEvent.isCurrent(), debsEvent.getStartCellNoQ1(), debsEvent.getEndCellNoQ1());
     }
-
 
     private Object[] processEventForMaxK(boolean isCurrent, int startCell, int endCell) {
 
@@ -43,8 +42,8 @@ public class MaxKQ1Processor {
         Object[] data = new Object[kValue];
 
 
-        int startCellValue = Math.round((float) ((startCell / 601)) / 2) * 301 + Math.round((float) ((startCell % 601)) / 2);
-        int endCellValue = Math.round((float) (endCell / 601) / 2) * 301 + Math.round((float) ((endCell % 601)) / 2);
+        int startCellValue = startCell;
+        int endCellValue = endCell;
 
 
         LinkedList<Long> currentTopK;

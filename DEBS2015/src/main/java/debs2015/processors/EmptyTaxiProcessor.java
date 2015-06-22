@@ -13,19 +13,13 @@ public class EmptyTaxiProcessor {
     private CountProfitCustomObj[] cellDataMap = new CountProfitCustomObj[600600];
     private LinkedList<Object[]> taxiInfoWindow = new LinkedList<Object[]>();
 
-
-
-
-
-
-
     public void process(DebsEvent debsEvent) {
          Set<Integer> changedCell = new LinkedHashSet<Integer>();//key:Cell, values: (profit , count )
 
-         int endCell = debsEvent.getEndCellNo();
+         int endCell = debsEvent.getEndCellNoQ2();
          int medallion = debsEvent.getMedallion();
          long  dropoffTime = debsEvent.getDropoff_datetime();
-         int startCell  = debsEvent.getStartCellNo();
+         int startCell  = debsEvent.getStartCellNoQ2();
          float profit = debsEvent.getProfit();
 
           CountProfitCustomObj previousData=  cellDataMap[endCell];

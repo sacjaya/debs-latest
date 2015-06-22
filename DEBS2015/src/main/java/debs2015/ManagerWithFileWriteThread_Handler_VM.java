@@ -179,17 +179,23 @@ public class ManagerWithFileWriteThread_Handler_VM {
                 float pickupLatitude;
                 float dropoffLongitude;
                 float dropoffLatitude;
+                boolean passQuery1 = true, passQuery2 = true;
+                byte type = 0;
+
+                //For query 1
                 try {
                     if (-74.916578f > pickupLongitude || -73.120778f < pickupLongitude) {
                         line = br.readLine();
-                        continue;
+                        passQuery1 = false;
+                        //continue;
                     }
 
                     pickupLatitude = Float.parseFloat(pickup_latitude);
 
                     if (40.129715978f > pickupLatitude || 41.477182778f < pickupLatitude) {
                         line = br.readLine();
-                        continue;
+                        passQuery1 = false;
+                        //continue;
                     }
 
 
@@ -197,19 +203,70 @@ public class ManagerWithFileWriteThread_Handler_VM {
 
                     if (-74.916578f > dropoffLongitude || -73.120778f < dropoffLongitude) {
                         line = br.readLine();
-                        continue;
+                        passQuery1 = false;
+                        //continue;
                     }
 
                     dropoffLatitude = Float.parseFloat(dropoff_latitude);
 
                     if (40.129715978f > dropoffLatitude || 41.477182778f < dropoffLatitude) {
                         line = br.readLine();
-                        continue;
+                        passQuery1 = false;
+                        //continue;
                     }
                 } catch (NumberFormatException e) {
                     //We do nothing here. This is due having odd values for lat, lon values.
                     line = br.readLine();
                     continue;
+                }
+
+                //For query 2
+                try {
+                    if (-74.9150815f > pickupLongitude || -73.1192815f < pickupLongitude) {
+                        line = br.readLine();
+                        passQuery2 = false;
+                        //continue;
+                    }
+
+                    pickupLatitude = Float.parseFloat(pickup_latitude);
+
+                    if (40.128593089f > pickupLatitude || 41.476059889f < pickupLatitude) {
+                        line = br.readLine();
+                        passQuery2 = false;
+                        //continue;
+                    }
+
+
+                    dropoffLongitude = Float.parseFloat(dropoff_longitude);
+
+                    if (-74.9150815f > dropoffLongitude || -73.1192815f < dropoffLongitude) {
+                        line = br.readLine();
+                        passQuery2 = false;
+                        //continue;
+                    }
+
+                    dropoffLatitude = Float.parseFloat(dropoff_latitude);
+
+                    if (40.128593089f > dropoffLatitude || 41.476059889f < dropoffLatitude) {
+                        line = br.readLine();
+                        passQuery2 = false;
+                        //continue;
+                    }
+                } catch (NumberFormatException e) {
+                    //We do nothing here. This is due having odd values for lat, lon values.
+                    line = br.readLine();
+                    continue;
+                }
+                type = 3;
+                if((!passQuery1)&&(!passQuery2)){
+                    //That means the data point is outside both the queries. So we ignore it
+                    continue;
+                }else if((passQuery1)&&(!passQuery2)){
+                    //Only query 1 could use the point
+                    type = 1;
+                }else if((!passQuery1)&&(passQuery2)){
+                    //Only query 2 could use the point
+                    type = 2;
                 }
 
                 float fareAmount = Float.parseFloat(fare_amount);
@@ -236,7 +293,7 @@ public class ManagerWithFileWriteThread_Handler_VM {
                     eventHolder.setDropoff_latitude(dropoffLatitude);
                     eventHolder.setFare_plus_ip_amount(totalAmount);
                     eventHolder.setIij_timestamp(currentTIme);
-
+                    eventHolder.setType(type);
                 } finally {
                     count++;
                     dataReadBuffer.publish(sequenceNo);
@@ -258,16 +315,33 @@ public class ManagerWithFileWriteThread_Handler_VM {
     }
 
     private class ConversionHandler implements EventHandler<DebsEvent> {
-        CellIdProcessor cellIdProcessor = new CellIdProcessor();
+        CellIdProcessorQ1 cellIdProcessorQ1 = new CellIdProcessorQ1();
+        CellIdProcessorQ2 cellIdProcessorQ2 = new CellIdProcessorQ2();
         TimeStampProcessor timeStampProcessor = new TimeStampProcessor();
 
         @Override
         public void onEvent(DebsEvent debsEvent, long l, boolean b) throws Exception {
-            debsEvent.setStartCellNo(cellIdProcessor.execute(debsEvent.getPickup_longitude(), debsEvent.getPickup_latitude()));
-            debsEvent.setEndCellNo(cellIdProcessor.execute(debsEvent.getDropoff_longitude(), debsEvent.getDropoff_latitude()));
+
+            switch (debsEvent.getType()){
+                case 1:
+                    debsEvent.setStartCellNoQ1(cellIdProcessorQ1.execute(debsEvent.getPickup_longitude(), debsEvent.getPickup_latitude()));
+                    debsEvent.setEndCellNoQ1(cellIdProcessorQ1.execute(debsEvent.getDropoff_longitude(), debsEvent.getDropoff_latitude()));
+                    break;
+                case 2:
+                    debsEvent.setStartCellNoQ2(cellIdProcessorQ2.execute(debsEvent.getPickup_longitude(), debsEvent.getPickup_latitude()));
+                    debsEvent.setEndCellNoQ2(cellIdProcessorQ2.execute(debsEvent.getDropoff_longitude(), debsEvent.getDropoff_latitude()));
+                    break;
+                case 3:
+                    debsEvent.setStartCellNoQ1(cellIdProcessorQ1.execute(debsEvent.getPickup_longitude(), debsEvent.getPickup_latitude()));
+                    debsEvent.setEndCellNoQ1(cellIdProcessorQ1.execute(debsEvent.getDropoff_longitude(), debsEvent.getDropoff_latitude()));
+
+                    debsEvent.setStartCellNoQ2(cellIdProcessorQ2.execute(debsEvent.getPickup_longitude(), debsEvent.getPickup_latitude()));
+                    debsEvent.setEndCellNoQ2(cellIdProcessorQ2.execute(debsEvent.getDropoff_longitude(), debsEvent.getDropoff_latitude()));
+                    break;
+            }
+
             debsEvent.setPickup_datetime(timeStampProcessor.execute(debsEvent.getPickup_datetime_org()));
             debsEvent.setDropoff_datetime(timeStampProcessor.execute(debsEvent.getDropoff_datetime_org()));
-
         }
     }
 
@@ -290,9 +364,15 @@ public class ManagerWithFileWriteThread_Handler_VM {
 
         @Override
         public void onEvent(DebsEvent debsEvent, long l, boolean b) throws Exception {
+            //The following will allow only the events of type 1 and type 3
+            if(debsEvent.getType() == 2){
+                return;
+            }
+
             List<DebsEvent> afterThirtyMinWindow =externalTimeWindowProcessor.process(debsEvent);
 
             for (DebsEvent eve : afterThirtyMinWindow) {
+
                 Object[] topK = maxKQ1Processor.process(eve);
                 long currentTime = System.currentTimeMillis();
                 if (topK != null) {
@@ -342,6 +422,7 @@ public class ManagerWithFileWriteThread_Handler_VM {
         ExternalTimeWindowProcessor externalTimeWindowProcessor = new ExternalTimeWindowProcessor(15 * 60 * 1000);
         GroupByExecutor groupByExecutor = new GroupByExecutor();
         EmptyTaxiProcessor emptyTaxiProcessor = new EmptyTaxiProcessor();
+
         public Q2MaxKHandler(){
             super();
             try {
@@ -353,9 +434,14 @@ public class ManagerWithFileWriteThread_Handler_VM {
         }
 
         public void onEvent(DebsEvent debsEvent, long l, boolean b) throws Exception {
+            //The following will allow only the events of type 2 and type 3
+            if(debsEvent.getType() == 1){
+                return;
+            }
+
             List<DebsEvent> windowOutputList = externalTimeWindowProcessor.process(debsEvent);
             for (DebsEvent event : windowOutputList) {
-                float profit = groupByExecutor.execute(event.getStartCellNo(), event.getFare_plus_ip_amount(), event.isCurrent());
+                float profit = groupByExecutor.execute(event.getStartCellNoQ2(), event.getFare_plus_ip_amount(), event.isCurrent());
                 event.setProfit(profit);
             }
 

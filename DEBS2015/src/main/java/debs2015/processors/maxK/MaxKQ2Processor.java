@@ -64,6 +64,10 @@ public class MaxKQ2Processor {
                 //We do this until top-k is 10 (kValue==10)
                 //for (int i = cellList.size()-1 ; i >= 0 ; i--){
                 //CustomObj customObj = cellList.get(i);
+
+//                int startCellValue = Math.round((float) ((startCell / 1201)) / 2) * 301 + Math.round((float) ((startCell % 1201)) / 2);
+//                int endCellValue = Math.round((float) (endCell / 1201) / 2) * 301 + Math.round((float) ((endCell % 1201)) / 2);
+
                 int cellIntValue = customObj.getCellID();
                 data[position++] = (cellIntValue / 601) + "." + (cellIntValue % 601) + "," + customObj.getEmptyTaxiCount() + "," + customObj.getProfit() + "," + customObj.getProfit_per_taxi();//profitability_of_cell_
             }

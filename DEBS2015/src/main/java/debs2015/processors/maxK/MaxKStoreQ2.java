@@ -25,7 +25,7 @@ import debs2015.processors.ProfitObj;
 import java.util.*;
 
 public class MaxKStoreQ2 {
-    private Float[] routeFrequencies = new Float[361200]; //a reverse index of which the key is the cell ID and the value is the profitability.
+    private Float[] routeFrequencies = new Float[361200]; //a reverse index of which the key is the cell ID and the value is the profitability.(601x601)
     private Map<Float, ArrayList<ProfitObj>> reverseLookup = new TreeMap<Float, ArrayList<ProfitObj>>(
             new Comparator<Float>() {
                 public int compare(Float o1, Float o2) {

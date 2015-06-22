@@ -18,11 +18,15 @@ public class DebsEvent {
     float dropoff_latitude;
     float fare_plus_ip_amount;
     long iij_timestamp;
+    byte type;
 
     /*****************************q2p1:query1********************************************/
 
-    int startCellNo;//    debs:cellId(pickup_longitude,pickup_latitude) as startCellNo
-    int endCellNo; //debs:cellId(dropoff_longitude,dropoff_latitude) as endCellNo
+    int startCellNoQ1;//    debs:cellId(pickup_longitude,pickup_latitude) as startCellNo
+    int endCellNoQ1; //debs:cellId(dropoff_longitude,dropoff_latitude) as endCellNo
+    int startCellNoQ2;//    debs:cellId(pickup_longitude,pickup_latitude) as startCellNo
+    int endCellNoQ2; //debs:cellId(dropoff_longitude,dropoff_latitude) as endCellNo
+
     long pickup_datetime; //debs:getTimestamp(pickup_datetime_org) as pickup_datetime
     long dropoff_datetime; //debs:getTimestamp(dropoff_datetime_org) as dropoff_datetime
 
@@ -42,8 +46,9 @@ public class DebsEvent {
     }
 
     public DebsEvent(int medallion, String pickup_datetime_org, String dropoff_datetime_org, float pickup_longitude,
-                     float pickup_latitude, float dropoff_longitude, float dropoff_latitude, float fare_plus_ip_amount, long iij_timestamp, int startCellNo, int endCellNo,
-                     long pickup_datetime, long dropoff_datetime) {
+                     float pickup_latitude, float dropoff_longitude, float dropoff_latitude, float fare_plus_ip_amount, long iij_timestamp,
+                     int startCellNoQ1, int endCellNoQ1,
+                     int startCellNoQ2, int endCellNoQ2, long pickup_datetime, long dropoff_datetime, byte type) {
         this.medallion = medallion;
         this.pickup_datetime_org = pickup_datetime_org;
         this.dropoff_datetime_org = dropoff_datetime_org;
@@ -53,10 +58,13 @@ public class DebsEvent {
         this.dropoff_latitude = dropoff_latitude;
         this.fare_plus_ip_amount = fare_plus_ip_amount;
         this.iij_timestamp = iij_timestamp;
-        this.startCellNo = startCellNo;
-        this.endCellNo = endCellNo;
+        this.startCellNoQ1 = startCellNoQ1;
+        this.endCellNoQ1 = endCellNoQ1;
+        this.startCellNoQ2 = startCellNoQ2;
+        this.endCellNoQ2 = endCellNoQ2;
         this.pickup_datetime = pickup_datetime;
         this.dropoff_datetime = dropoff_datetime;
+        this.type = type;
     }
 
     public int getMedallion() {
@@ -139,21 +147,44 @@ public class DebsEvent {
         this.iij_timestamp = iij_timestamp;
     }
 
-    public int getStartCellNo() {
-        return startCellNo;
+
+
+    public int getStartCellNoQ1() {
+        return startCellNoQ1;
     }
 
-    public void setStartCellNo(int startCellNo) {
-        this.startCellNo = startCellNo;
+    public void setStartCellNoQ1(int startCellNo) {
+        this.startCellNoQ1 = startCellNo;
     }
 
-    public int getEndCellNo() {
-        return endCellNo;
+    public int getEndCellNoQ1() {
+        return endCellNoQ1;
     }
 
-    public void setEndCellNo(int endCellNo) {
-        this.endCellNo = endCellNo;
+    public void setEndCellNoQ1(int endCellNo) {
+        this.endCellNoQ1 = endCellNo;
     }
+
+
+
+    public int getStartCellNoQ2() {
+        return startCellNoQ2;
+    }
+
+    public void setStartCellNoQ2(int startCellNo) {
+        this.startCellNoQ2 = startCellNo;
+    }
+
+    public int getEndCellNoQ2() {
+        return endCellNoQ2;
+    }
+
+    public void setEndCellNoQ2(int endCellNo) {
+        this.endCellNoQ2 = endCellNo;
+    }
+
+
+
 
     public long getPickup_datetime() {
         return pickup_datetime;
@@ -188,6 +219,14 @@ public class DebsEvent {
         this.timeStamp = timeStamp;
     }
 
+    public void setType(byte type){
+        this.type = type;
+    }
+
+    public byte getType(){
+        return type;
+    }
+
     public float getProfit() {
         return profit;
     }
@@ -205,7 +244,7 @@ public class DebsEvent {
     }
 
     public DebsEvent clone(){    	
-    	return  new DebsEvent(medallion,pickup_datetime_org,dropoff_datetime_org,pickup_longitude,pickup_latitude,dropoff_longitude,dropoff_latitude,fare_plus_ip_amount,iij_timestamp,startCellNo, endCellNo,pickup_datetime, dropoff_datetime);
+    	return  new DebsEvent(medallion,pickup_datetime_org,dropoff_datetime_org,pickup_longitude,pickup_latitude,dropoff_longitude,dropoff_latitude,fare_plus_ip_amount,iij_timestamp, startCellNoQ1, endCellNoQ1, startCellNoQ2, endCellNoQ2, pickup_datetime, dropoff_datetime, type);
     	
     }
 }
